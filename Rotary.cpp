@@ -106,6 +106,7 @@ unsigned char Rotary::process_button() {
   if (pinstate == LOW && state_btn == HIGH) {
       btnstate = BTN_RELEASED;
   }
+  state_btn = pinstate;
   return btnstate;
 }
 
