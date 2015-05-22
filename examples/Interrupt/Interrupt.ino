@@ -33,4 +33,15 @@ ISR(PCINT2_vect) {
   else if (result == DIR_CCW) {
     Serial.println("CounterClockWise");
   }
+
+  unsigned char result_btn = r.process_button();
+  if (result == BTN_NONE) {
+    // do nothing
+  }
+  else if (result == BTN_PRESSED) {
+    Serial.println("Button pressed");
+  }
+  else if (result == BTN_RELEASED) {
+    Serial.println("Button released");
+  }
 }
