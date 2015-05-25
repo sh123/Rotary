@@ -28,6 +28,8 @@
 #define BTN_PRESSED 0x10
 // Button was released
 #define BTN_RELEASED 0x20
+// Buton long-pressed
+#define BTN_PRESSED_LONG 0x30
 
 class Rotary
 {
@@ -38,6 +40,7 @@ class Rotary
   private:
     unsigned char state;
     unsigned char state_btn;
+    unsigned long btn_pressed_time_ms;
     unsigned char pin1;
     unsigned char pin2;
     unsigned char pin3;

@@ -17,6 +17,8 @@
 
 #define R_START 0x0
 
+#define LONG_PRESS_MS 1000
+
 #ifdef HALF_STEP
 // Use the half-step state table (emits a code at 00 and 11)
 #define R_CCW_BEGIN 0x1
@@ -98,13 +100,20 @@ unsigned char Rotary::process() {
 
 unsigned char Rotary::process_button() {
   // Grab button state
+  unsigned char btnstate;
   unsigned char pinstate = digitalRead(pin3);
-  unsigned char btnstate = BTN_NONE;
   if (pinstate == HIGH && state_btn == LOW) {
       btnstate = BTN_PRESSED;
+      btn_pressed_time_ms = millis();
   }
-  if (pinstate == LOW && state_btn == HIGH) {
+  else if (pinstate == LOW && state_btn == HIGH) {
       btnstate = BTN_RELEASED;
+  }
+  else if (pinstate == HIGH && state_btn == HIGH && millis() - btn_pressed_time_ms > LONG_PRESS_MS) {
+      btnstate = BTN_PRESSED_LONG;
+  } 
+  else {
+      btnstate = BTN_NONE;
   }
   state_btn = pinstate;
   return btnstate;
