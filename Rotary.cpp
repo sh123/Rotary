@@ -112,7 +112,7 @@ unsigned char Rotary::process_button() {
       {
         new_btn_state = BTN_PRESSED_LONG;
       }
-      if (new_btn_pinstate == HIGH && old_btn_pinstate == LOW) 
+      else if (new_btn_pinstate == HIGH && old_btn_pinstate == LOW) 
       {
         new_btn_state = BTN_RELEASED;
       }
@@ -124,8 +124,6 @@ unsigned char Rotary::process_button() {
       }
       break;
     case BTN_RELEASED_LONG: 
-      old_btn_state = BTN_RELEASED;
-      break;
     case BTN_RELEASED:
       if (new_btn_pinstate == LOW && old_btn_pinstate == HIGH) 
       {
