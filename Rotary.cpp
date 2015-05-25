@@ -86,7 +86,8 @@ Rotary::Rotary(char _pin1, char _pin2, char _pin3) {
 #endif
   // Initialise state.
   state = R_START;
-  state_btn = HIGH;
+  old_btn_pinstate = HIGH;
+  old_btn_state = BTN_RELEASED;
 }
 
 unsigned char Rotary::process() {
@@ -100,22 +101,46 @@ unsigned char Rotary::process() {
 
 unsigned char Rotary::process_button() {
   // Grab button state
-  unsigned char btnstate;
-  unsigned char pinstate = digitalRead(pin3);
-  if (pinstate == HIGH && state_btn == LOW) {
-      btnstate = BTN_PRESSED;
-      btn_pressed_time_ms = millis();
+  unsigned char new_btn_state = BTN_NONE;
+  unsigned char new_btn_pinstate = digitalRead(pin3);
+
+  switch (old_btn_state) {
+    case BTN_NONE:
+      break;
+    case BTN_PRESSED:
+      if (new_btn_pinstate == LOW && old_btn_pinstate == LOW && millis() - btn_pressed_time_ms > LONG_PRESS_MS)
+      {
+        new_btn_state = BTN_PRESSED_LONG;
+      }
+      if (new_btn_pinstate == HIGH && old_btn_pinstate == LOW) 
+      {
+        new_btn_state = BTN_RELEASED;
+      }
+      break;
+    case BTN_PRESSED_LONG:
+      if (new_btn_pinstate == HIGH && old_btn_pinstate == LOW) 
+      {
+        new_btn_state = BTN_RELEASED_LONG;
+      }
+      break;
+    case BTN_RELEASED_LONG: 
+      old_btn_state = BTN_RELEASED;
+      break;
+    case BTN_RELEASED:
+      if (new_btn_pinstate == LOW && old_btn_pinstate == HIGH) 
+      {
+        new_btn_state = BTN_PRESSED;
+        btn_pressed_time_ms = millis();
+      }
+      break;
+    default:
+      break;
   }
-  else if (pinstate == LOW && state_btn == HIGH) {
-      btnstate = BTN_RELEASED;
+  if (new_btn_state != BTN_NONE) 
+  {
+    old_btn_state = new_btn_state;
   }
-  else if (pinstate == HIGH && state_btn == HIGH && millis() - btn_pressed_time_ms > LONG_PRESS_MS) {
-      btnstate = BTN_PRESSED_LONG;
-  } 
-  else {
-      btnstate = BTN_NONE;
-  }
-  state_btn = pinstate;
-  return btnstate;
+  old_btn_pinstate = new_btn_pinstate;
+  return new_btn_state;
 }
 
