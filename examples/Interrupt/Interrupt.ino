@@ -35,13 +35,13 @@ ISR(PCINT2_vect) {
   }
 
   unsigned char result_btn = r.process_button();
-  if (result == BTN_NONE) {
+  if (result_btn == BTN_NONE) {
     // do nothing
   }
-  else if (result == BTN_PRESSED) {
+  else if (result_btn == BTN_PRESSED) {
     Serial.println("Button pressed");
   }
-  else if (result == BTN_RELEASED) {
+  else if (result_btn == BTN_RELEASED) {
     Serial.println("Button released");
   }
 }
