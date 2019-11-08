@@ -17,8 +17,6 @@
 
 #define R_START 0x0
 
-#define LONG_PRESS_MS 1000
-
 #ifdef HALF_STEP
 // Use the half-step state table (emits a code at 00 and 11)
 #define R_CCW_BEGIN 0x1
@@ -86,8 +84,7 @@ Rotary::Rotary(char _pin1, char _pin2, char _pin3) {
 #endif
   // Initialise state.
   state = R_START;
-  old_btn_pinstate = HIGH;
-  old_btn_state = BTN_RELEASED;
+  state_btn = HIGH;
 }
 
 unsigned char Rotary::process() {
@@ -101,44 +98,16 @@ unsigned char Rotary::process() {
 
 unsigned char Rotary::process_button() {
   // Grab button state
-  unsigned char new_btn_state = BTN_NONE;
-  unsigned char new_btn_pinstate = digitalRead(pin3);
-
-  switch (old_btn_state) {
-    case BTN_NONE:
-      break;
-    case BTN_PRESSED:
-      if (new_btn_pinstate == LOW && old_btn_pinstate == LOW && millis() - btn_pressed_time_ms > LONG_PRESS_MS)
-      {
-        new_btn_state = BTN_PRESSED_LONG;
-      }
-      else if (new_btn_pinstate == HIGH && old_btn_pinstate == LOW) 
-      {
-        new_btn_state = BTN_RELEASED;
-      }
-      break;
-    case BTN_PRESSED_LONG:
-      if (new_btn_pinstate == HIGH && old_btn_pinstate == LOW) 
-      {
-        new_btn_state = BTN_RELEASED_LONG;
-      }
-      break;
-    case BTN_RELEASED_LONG: 
-    case BTN_RELEASED:
-      if (new_btn_pinstate == LOW && old_btn_pinstate == HIGH) 
-      {
-        new_btn_state = BTN_PRESSED;
-        btn_pressed_time_ms = millis();
-      }
-      break;
-    default:
-      break;
+  unsigned char pinstate = digitalRead(pin3);
+  unsigned char btnstate = BTN_NONE;
+  if (pinstate == HIGH && state_btn == LOW) {
+      btnstate = BTN_RELEASED;
+	  state_btn = HIGH;
   }
-  if (new_btn_state != BTN_NONE) 
-  {
-    old_btn_state = new_btn_state;
+  if (pinstate == LOW && state_btn == HIGH) {
+      btnstate = BTN_PRESSED;
+	  state_btn = LOW;
   }
-  old_btn_pinstate = new_btn_pinstate;
-  return new_btn_state;
+  return btnstate;
 }
 
