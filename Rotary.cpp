@@ -68,19 +68,23 @@ const unsigned char ttable[7][4] = {
 /*
  * Constructor. Each arg is the pin number for each encoder contact.
  */
-Rotary::Rotary(char _pin1, char _pin2) {
+Rotary::Rotary(char _pin1, char _pin2, char _pin3) {
   // Assign variables.
   pin1 = _pin1;
   pin2 = _pin2;
+  pin3 = _pin3;
   // Set pins to input.
   pinMode(pin1, INPUT);
   pinMode(pin2, INPUT);
+  pinMode(pin3, INPUT);
 #ifdef ENABLE_PULLUPS
   digitalWrite(pin1, HIGH);
   digitalWrite(pin2, HIGH);
+  digitalWrite(pin3, HIGH);
 #endif
   // Initialise state.
   state = R_START;
+  state_btn = HIGH;
 }
 
 unsigned char Rotary::process() {
@@ -91,3 +95,19 @@ unsigned char Rotary::process() {
   // Return emit bits, ie the generated event.
   return state & 0x30;
 }
+
+unsigned char Rotary::process_button() {
+  // Grab button state
+  unsigned char pinstate = digitalRead(pin3);
+  unsigned char btnstate = BTN_NONE;
+  if (pinstate == HIGH && state_btn == LOW) {
+      btnstate = BTN_RELEASED;
+	  state_btn = HIGH;
+  }
+  if (pinstate == LOW && state_btn == HIGH) {
+      btnstate = BTN_PRESSED;
+	  state_btn = LOW;
+  }
+  return btnstate;
+}
+
