@@ -3,7 +3,7 @@ Rotary Encoder Arduino Library
 
 Arduino library for reading rotary encoders that output a 2-bit [gray code](http://en.wikipedia.org/wiki/Gray_code). 
 
-    Rotary r = Rotary(2, 3, 4);
+    Rotary r = Rotary(2, 3, 4);  // click , data , switch
 
     void loop() {
       unsigned char  result = r.process();
