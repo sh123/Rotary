@@ -6,7 +6,7 @@ Arduino library for reading rotary encoders that output a 2-bit [gray code](http
     Rotary r = Rotary(2, 3, 4);
 
     void loop() {
-      result = r.process();
+      unsigned char  result = r.process();
       if (result) {
         Serial.println(result == DIR_CW ? "Right" : "Left");
       }
