@@ -10,7 +10,7 @@ Arduino library for reading rotary encoders that output a 2-bit [gray code](http
       if (result) {
         Serial.println(result == DIR_CW ? "Right" : "Left");
       }
-      result_btn = r.process_button();
+      unsigned char result_btn = r.process_button();
       if (result_btn) {
         Serial.println(result_btn == BTN_PRESSED ? "Pressed" : "Released");
       }
